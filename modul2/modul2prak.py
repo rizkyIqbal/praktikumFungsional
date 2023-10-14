@@ -22,32 +22,17 @@ def generate_positions(width):
         positions.append((x, y))
     return positions
 
+# Fungsi untuk memeriksa apakah permainan selesai
+def is_game_over(board, current_pos, goal_pos):
+    return current_pos == goal_pos
 
-# Inisialisasi board dengan lebar sesuai input user
-width = int(input("Masukkan lebar board: "))
-board = create_board(width)
+while ulangSemua == "y" or ulangSemua == "":
+    # Inisialisasi board dengan lebar sesuai input user
+    width = int(input("Masukkan lebar board: "))
+    board = create_board(width)
 
 
-# Membuat posisi awal bidak dan tujuan secara acak
-try:
-    positions = generate_positions(width)
-    start_pos, goal_pos = positions[0], positions[1]
-    board[start_pos[0]][start_pos[1]] = "A"
-    board[goal_pos[0]][goal_pos[1]] = "O"
-except IndexError:
-    print("Kesalahan dalam menghasilkan posisi awal dan tujuan.")
-
-display_board(board)
-
-repeat = input(
-    "New Position (Y/N)?"
-).lower()
-
-ulang = 0
-
-while repeat == "y":
-    board[start_pos[0]][start_pos[1]] = "-"
-    board[goal_pos[0]][goal_pos[1]] = "-"
+    # Membuat posisi awal bidak dan tujuan secara acak
     try:
         positions = generate_positions(width)
         start_pos, goal_pos = positions[0], positions[1]
@@ -55,28 +40,58 @@ while repeat == "y":
         board[goal_pos[0]][goal_pos[1]] = "O"
     except IndexError:
         print("Kesalahan dalam menghasilkan posisi awal dan tujuan.")
+    
+    if (board[start_pos[0]][start_pos[1]] == board[goal_pos[0]][goal_pos[1]]):
+        print("Index A dan 0 Sama")
+        print("Generating Ulang ....")
+        board[start_pos[0]][start_pos[1]] = "-"
+        board[goal_pos[0]][goal_pos[1]] = "-"
+        try:
+            positions = generate_positions(width)
+            start_pos, goal_pos = positions[0], positions[1]
+            board[start_pos[0]][start_pos[1]] = "A"
+            board[goal_pos[0]][goal_pos[1]] = "O"
+        except IndexError:
+            print("Kesalahan dalam menghasilkan posisi awal dan tujuan.")
+
     display_board(board)
 
     repeat = input(
         "New Position (Y/N)?"
     ).lower()
-    ulang += 1
-    if(ulang == 3):
-        print("Maximal 3 dalam mengubah posisi!")
-        repeat = "n"
-    
+
+    ulang = 0
+
+    while repeat == "y":
+        board[start_pos[0]][start_pos[1]] = "-"
+        board[goal_pos[0]][goal_pos[1]] = "-"
+        try:
+            positions = generate_positions(width)
+            start_pos, goal_pos = positions[0], positions[1]
+            board[start_pos[0]][start_pos[1]] = "A"
+            board[goal_pos[0]][goal_pos[1]] = "O"
+        except IndexError:
+            print("Kesalahan dalam menghasilkan posisi awal dan tujuan.")
+
+        if (board[start_pos[0]][start_pos[1]] == board[goal_pos[0]][goal_pos[1]]):
+            print("Index A dan 0 Sama")
+            print("Generating Ulang ....")
+        else:
+            display_board(board)
+            repeat = input(
+                "New Position (Y/N)?"
+            ).lower()
+            ulang += 1
+            if(ulang == 3):
+                print("Maximal 3 dalam mengubah posisi!")
+                repeat = "n"
+        
 
 
 
-
-# Fungsi untuk memeriksa apakah permainan selesai
-def is_game_over(board, current_pos, goal_pos):
-    return current_pos == goal_pos
+    current_pos = start_pos
 
 
-current_pos = start_pos
-
-while ulangSemua == "y" or ulangSemua == "":
     move = input(
         "Masukkan perintah (w/a/s/d untuk atas/kiri/bawah/kanan, q untuk keluar): "
     ).lower()
@@ -102,19 +117,18 @@ while ulangSemua == "y" or ulangSemua == "":
                 board[current_pos[0]][current_pos[1]] = "-"
                 current_pos = (x, y)
                 board[current_pos[0]][current_pos[1]] = "A"
-                
-
-                if is_game_over(board, current_pos, goal_pos):
-                    display_board(board)
-                    print("Anda menang! Selamat!")
-                    break
-                else:
-                    display_board(board)
-                    print("You Lose! Selamat!")
-                    False
+            
             else:
                 print("Langkah tidak valid. Coba lagi.")
 
         else:
             print("Perintah tidak valid. Coba lagi.")
-    ulangSemua = "n"
+        if is_game_over(board, current_pos, goal_pos):
+            display_board(board)
+            print("Anda menang! Selamat!")
+            break
+        else:
+            display_board(board)
+            print("You Lose!!")
+            False
+    ulangSemua = input("apakah anda mau mengulang? ")
