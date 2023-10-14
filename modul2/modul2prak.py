@@ -1,9 +1,10 @@
 import random
 
+ulangSemua =""
 
 # Fungsi untuk membuat board matrix
 def create_board(width):
-    return [[" " for _ in range(width)] for _ in range(width)]
+    return [["-" for _ in range(width)] for _ in range(width)]
 
 
 # Fungsi untuk menampilkan board
@@ -26,6 +27,7 @@ def generate_positions(width):
 width = int(input("Masukkan lebar board: "))
 board = create_board(width)
 
+
 # Membuat posisi awal bidak dan tujuan secara acak
 try:
     positions = generate_positions(width)
@@ -37,6 +39,35 @@ except IndexError:
 
 display_board(board)
 
+repeat = input(
+    "New Position (Y/N)?"
+).lower()
+
+ulang = 0
+
+while repeat == "y":
+    board[start_pos[0]][start_pos[1]] = "-"
+    board[goal_pos[0]][goal_pos[1]] = "-"
+    try:
+        positions = generate_positions(width)
+        start_pos, goal_pos = positions[0], positions[1]
+        board[start_pos[0]][start_pos[1]] = "A"
+        board[goal_pos[0]][goal_pos[1]] = "O"
+    except IndexError:
+        print("Kesalahan dalam menghasilkan posisi awal dan tujuan.")
+    display_board(board)
+
+    repeat = input(
+        "New Position (Y/N)?"
+    ).lower()
+    ulang += 1
+    if(ulang == 3):
+        print("Maximal 3 dalam mengubah posisi!")
+        repeat = "n"
+    
+
+
+
 
 # Fungsi untuk memeriksa apakah permainan selesai
 def is_game_over(board, current_pos, goal_pos):
@@ -45,36 +76,45 @@ def is_game_over(board, current_pos, goal_pos):
 
 current_pos = start_pos
 
-while True:
+while ulangSemua == "y" or ulangSemua == "":
     move = input(
         "Masukkan perintah (w/a/s/d untuk atas/kiri/bawah/kanan, q untuk keluar): "
     ).lower()
 
-    if move == "q":
-        print("Permainan dihentikan.")
-        break
-    elif move in ["w", "a", "s", "d"]:
-        x, y = current_pos
-        if move == "w":
-            x -= 1
-        elif move == "a":
-            y -= 1
-        elif move == "s":
-            x += 1
-        elif move == "d":
-            y += 1
+    inputList= [char for char in move]
+    # print(inputList)
+    for list in inputList:
+        if list == "q":
+            print("Permainan dihentikan.")
+            break
+        elif list in ["w", "a", "s", "d"]:
+            x, y = current_pos
+            if list == "w":
+                x -= 1
+            elif list == "a":
+                y -= 1
+            elif list == "s":
+                x += 1
+            elif list == "d":
+                y += 1
 
-        if 0 <= x < width and 0 <= y < width:
-            board[current_pos[0]][current_pos[1]] = " "
-            current_pos = (x, y)
-            board[current_pos[0]][current_pos[1]] = "A"
-            display_board(board)
+            if 0 <= x < width and 0 <= y < width:
+                board[current_pos[0]][current_pos[1]] = "-"
+                current_pos = (x, y)
+                board[current_pos[0]][current_pos[1]] = "A"
+                
 
-            if is_game_over(board, current_pos, goal_pos):
-                print("Anda menang! Selamat!")
-                break
+                if is_game_over(board, current_pos, goal_pos):
+                    display_board(board)
+                    print("Anda menang! Selamat!")
+                    break
+                else:
+                    display_board(board)
+                    print("You Lose! Selamat!")
+                    False
+            else:
+                print("Langkah tidak valid. Coba lagi.")
+
         else:
-            print("Langkah tidak valid. Coba lagi.")
-
-    else:
-        print("Perintah tidak valid. Coba lagi.")
+            print("Perintah tidak valid. Coba lagi.")
+    ulangSemua = "n"
